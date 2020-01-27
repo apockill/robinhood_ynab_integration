@@ -40,7 +40,7 @@ def make_transaction(amount, budget_id, account_id, memo, date=None,
         approved=approved
     ).to_dict()
     transaction["memo"] = f"[AUTOMATED] {memo}"
-    transaction["payee_name"] = "RobinhoodAPI@Alex"
+    transaction["payee_name"] = "RobinhoodAPIScript"
     transactions_api = ynab_client.TransactionsApi()
 
     transactions_api.create_transaction(
