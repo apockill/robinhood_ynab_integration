@@ -58,7 +58,6 @@ def get_ynab_accounts(ynab_api_key, holding_acc_name, assets_acc_name):
     # Get Budgets
     budgets_api = ynab_client.BudgetsApi()
     budget_id = budgets_api.get_budgets().data.budgets[0].id
-    budget = budgets_api.get_budget_by_id(budget_id)
 
     # Get accounts
     accounts_api = ynab_client.AccountsApi()
