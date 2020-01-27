@@ -14,8 +14,14 @@ The "Checking" account will reflect purchases, sales, dividends, and transfers i
 The "Stocks" account will be automatically updated to reflect the current value of your Robinhood account. 
 
 # Instructions
-## Running the Script
-### Initial Setup
+## Setup (For YNAB)
+1) First, get your YNAB api key using [these instructions](https://api.youneedabudget.com/). Take note of the API key. 
+2) Create two "unlinked" accounts on YNAB. Account 1 will be a "Checking" type account, Account 2 will be a "Tracking" type account, for the current value of any stocks. Take note of your chosen names for the accounts on YNAB.
+
+## Setup (For Robinhood)
+1) Turn on 2FA on robinhood. To do this: go to settings, select turn on 2FA, select "Authentication App", click "Can't Scan It?", and take note of the 16-character QR code. 
+
+## Setup (For running the script)
 To enter account information, run this block in a terminal as one line.
 ```commandline
 read -p "Robinhood Username: " RH_USERNAME && \
@@ -28,4 +34,10 @@ read -p "YNAB API Key: " -s YNAB_API_KEY
 Install Dependencies:
 ```commandline
 pip install -r requirements.txt
+```
+## Running the Script
+With all of the previous setup complete, simply running the script should do all
+the necessary operations. You can then check your YNAB to see the updated transactional information and equity value.
+```python
+python3 sync_rh_to_ynab.py
 ```
