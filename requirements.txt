@@ -1,0 +1,3 @@
+git+https://github.com/Jamonek/Robinhood@pr/150
+git+https://github.com/apockill/ynab-client-python
+python-dateutil
