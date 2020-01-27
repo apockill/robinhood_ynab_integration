@@ -2,7 +2,7 @@ import datetime
 import logging
 import os
 
-import dateutil
+import dateutil.parser as date_parser
 import ynab_client
 from Robinhood import Robinhood
 
@@ -70,7 +70,7 @@ def get_ynab_accounts(ynab_api_key, holding_acc_name, assets_acc_name):
 
 
 def parse_iso_date(date_str) -> datetime.datetime:
-    return dateutil.parser.parse(date_str).replace(tzinfo=None)
+    return date_parser.parse(date_str).replace(tzinfo=None)
 
 
 def is_old_date(date, last_update_date):
