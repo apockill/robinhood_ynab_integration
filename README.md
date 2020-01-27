@@ -11,7 +11,7 @@ Basically, you create two "Unlinked" accounts on your YNAB.
 
 The "Checking" account will reflect purchases, sales, dividends, and transfers in and out of your robinhood. 
 
-The "Stocks" account will be automatically updated to reflect the current value of your Robinhood account. 
+The "Stocks" account will be automatically updated to reflect the current value of your Robinhood equity.
 
 # Instructions
 ## Setup
