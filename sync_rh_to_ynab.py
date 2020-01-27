@@ -188,8 +188,11 @@ def sync_robinhood_to_ynab(
             date=payment_date)
 
 
-def main(request):
-    logging.info("Request", request)
+def main(*args):
+    """
+    The only reason '*args' is accepted is so that Google Cloud Functions can
+    run this script.
+    """
     sync_robinhood_to_ynab(
         # Lot's of secrets
 
@@ -202,3 +205,7 @@ def main(request):
         robinhood_assets_acc=os.environ["RH_ASSETS_ACC"],
         robinhood_holding_acc=os.environ["RH_CHECKING_ACC"]
     )
+
+
+if __name__ == "__main__":
+    main("")
