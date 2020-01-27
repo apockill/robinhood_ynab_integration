@@ -36,9 +36,15 @@ Install Dependencies:
 ```commandline
 pip install -r requirements.txt
 ```
+
 ## Running the Script
 With all of the previous setup complete, simply running the script should do all
 the necessary operations. You can then check your YNAB to see the updated transactional information and equity value.
 ```python
 python3 sync_rh_to_ynab.py
 ```
+
+# Instructions for Google Cloud Functions setup
+(Coming soon) 
+
+How to set up automatic sync that happens every X hours using Google Cloud Functions and Cloud Scheduler.
