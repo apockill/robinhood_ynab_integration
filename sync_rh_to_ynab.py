@@ -28,7 +28,10 @@ def get_robinhood_info(rh: Robinhood):
     return stock_assets, equity - stock_assets
 
 
-def make_transaction(amount, budget_id, account_id, memo, date=None,
+def make_transaction(amount, budget_id, account_id,
+                     payee=None,
+                     memo=None,
+                     date=None,
                      approved=False):
     amount = int(amount * 1000)
     date = date or datetime.datetime.now().isoformat()
@@ -39,8 +42,9 @@ def make_transaction(amount, budget_id, account_id, memo, date=None,
         cleared="cleared",
         approved=approved
     ).to_dict()
-    transaction["memo"] = f"[AUTOMATED] {memo}"
-    transaction["payee_name"] = "RobinhoodAPIScript"
+
+    transaction["memo"] = memo if memo else None
+    transaction["payee_name"] = payee if payee else "RobinhoodAPIScript"
     transactions_api = ynab_client.TransactionsApi()
 
     transactions_api.create_transaction(
@@ -90,10 +94,14 @@ def sync_robinhood_to_ynab(
 
     # Log in to Robinhood
     trader = Robinhood()
-    trader.login(
+    login_successful = trader.login(
         username=robinhood_username,
         password=robinhood_pass,
-        qr_code=robinhood_qr_code), "Unable to log in to Robinhood!"
+        qr_code=robinhood_qr_code)
+
+    if not login_successful:
+        raise RuntimeError("Unable to log into Robinhood with the given "
+                           "credentials!")
 
     #### Update Assets Account ####
     real_asset_dollars, real_holding_dollars = get_robinhood_info(trader)
@@ -119,7 +127,7 @@ def sync_robinhood_to_ynab(
                      asset_adjustment)
 
     #### Update Holdings Account ####
-    # Update incoming and outgoing transfers
+    # Update incoming and outgoing transfers made from within Robinhood
     transfers = trader.get_transfers()["results"]
     for transfer in transfers:
         # Only process transactions since the last time the script ran
@@ -128,14 +136,40 @@ def sync_robinhood_to_ynab(
 
         # Add transaction to robinhood
         sign = 1 if transfer["direction"] == "deposit" else -1
+
+        logging.info(f"Processing transaction {transfer}")
         make_transaction(
             amount=float(transfer["amount"]) * sign,
             budget_id=budget_id,
             date=transfer["created_at"],
             account_id=holding_acc.id,
             memo="Robinhood Transfer")
-        logging.info("Adding Transaction for Transfer",
-                     transfer["amount"] * sign)
+
+    # Update incoming and outgoing transfers made from external sources (debit)
+    received_transfers = trader.get_received_transfers()["results"]
+    for transfer in received_transfers:
+        if is_old_date(transfer["created_at"], last_rh_update_date):
+            continue
+
+        if transfer["amount"]["currency_code"] != "USD":
+            raise RuntimeError("'Cash Management' Transactions that are not "
+                               "USD are not currently supported by this script!")
+
+        direction = transfer['direction']
+        if direction == 'debit':
+            sign = -1
+        elif direction == 'credit':
+            sign = 1
+        else:
+            raise RuntimeError(f"Unsupported transaction direction {direction}")
+
+        logging.info(f"Processing transaction {transfer}")
+        make_transaction(
+            amount=float(transfer['amount']['amount']) * sign,
+            budget_id=budget_id,
+            payee=transfer["originator_name"],
+            date=transfer["created_at"],
+            account_id=holding_acc.id)
 
     # Update internal stock purchases and sales
     order_history = trader.order_history()["results"]
@@ -172,16 +206,19 @@ def sync_robinhood_to_ynab(
     # Update dividend payouts
     dividends = trader.dividends()["results"]
     for dividend in dividends:
-        payment_date = parse_iso_date(dividend["paid_at"])
-        amount = dividend["amount"]
+        # Make sure the divident actually went through
+        if dividend["state"] == "voided":
+            continue
 
         # Make sure this is a new transaction
+        payment_date = parse_iso_date(dividend["paid_at"])
         if is_old_date(dividend["paid_at"], last_rh_update_date):
             continue
+
         symbol = trader.get_url(dividend["instrument"])["symbol"]
-        logging.info("Adding Dividend Adjustment", payment_date, amount)
+        logging.info(f"Adding Dividend Adjustment: {dividend}")
         make_transaction(
-            amount=float(amount),
+            amount=float(dividend["amount"]),
             budget_id=budget_id,
             account_id=holding_acc.id,
             memo=f"Dividend from {symbol}",
