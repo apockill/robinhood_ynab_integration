@@ -123,8 +123,7 @@ def sync_robinhood_to_ynab(
             memo="Daily Account Adjustment",
             approved=True)
     else:
-        logging.info("No Asset Adjustment Needed", asset_dollars,
-                     asset_adjustment)
+        logging.info("No Asset Adjustment Needed")
 
     #### Update Holdings Account ####
     # Update incoming and outgoing transfers made from within Robinhood
@@ -193,8 +192,8 @@ def sync_robinhood_to_ynab(
             outflow += price * quantity
 
         sign = -1 if order["side"] == "buy" else 1
-        logging.info("Adding transaction for stock order",
-                     symbol, outflow * sign, last_transaction_time)
+        logging.info("Adding transaction for stock order"
+                     f"{symbol} {outflow * sign} {last_transaction_time}")
         make_transaction(
             amount=outflow * sign,
             budget_id=budget_id,
