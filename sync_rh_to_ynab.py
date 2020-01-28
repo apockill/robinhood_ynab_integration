@@ -115,7 +115,7 @@ def sync_robinhood_to_ynab(
     asset_dollars = assets_acc.balance / 1000
     asset_adjustment = round(real_asset_dollars - asset_dollars, 3)
     if asset_adjustment != 0:
-        logging.info("Making adjustment", asset_adjustment)
+        logging.info(f"Making adjustment {asset_adjustment}")
         make_transaction(
             amount=asset_adjustment,
             budget_id=budget_id,
