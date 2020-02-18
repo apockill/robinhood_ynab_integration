@@ -205,8 +205,8 @@ def sync_robinhood_to_ynab(
     # Update dividend payouts
     dividends = trader.dividends()["results"]
     for dividend in dividends:
-        # Make sure the divident actually went through
-        if dividend["state"] == "voided":
+        # Make sure the divident actually went through (could be voided/pending)
+        if dividend["state"] != "paid":
             continue
 
         # Make sure this is a new transaction
