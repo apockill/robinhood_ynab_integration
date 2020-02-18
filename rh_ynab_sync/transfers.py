@@ -22,7 +22,7 @@ class Transfer:
         self.transfer_type: Transfer.TransferType = transfer_type
         self.memo: str = memo
         if self.memo is None:
-            self.memo = f"Transfer Type: {self.transfer_type}"
+            self.memo = f"Transfer Type: {self.transfer_type.value}"
 
     def __repr__(self):
         return f"Transfer(amount={self.amount}, " \

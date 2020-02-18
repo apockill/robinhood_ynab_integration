@@ -29,13 +29,11 @@ def get_robinhood_info(rh: Robinhood):
     return stock_assets, equity - stock_assets
 
 
-def make_transaction(amount, budget_id, account_id,
-                     payee=None,
-                     memo=None,
-                     date=None,
-                     approved=False):
-    raise RuntimeError("What?")
-
+def make_ynab_transaction(amount, budget_id, account_id,
+                          payee=None,
+                          memo=None,
+                          date=None,
+                          approved=False):
     amount = int(amount * 1000)
     date = date or datetime.datetime.now().isoformat()
     transaction = ynab_client.SaveTransaction(
@@ -82,8 +80,7 @@ def sync_robinhood_to_ynab(
         robinhood_username: str,
         robinhood_pass: str,
         robinhood_qr_code: str):
-    last_rh_update_date = datetime.datetime.now() - datetime.timedelta(
-        hours=1000)  # TODO: Do not commit.
+    last_rh_update_date = datetime.datetime.now() - datetime.timedelta(hours=8)
 
     # Log in to Robinhood
     trader = Robinhood()
@@ -109,7 +106,7 @@ def sync_robinhood_to_ynab(
     asset_adjustment = round(real_asset_dollars - asset_dollars, 3)
     if asset_adjustment != 0:
         logging.info(f"Making adjustment {asset_adjustment}")
-        make_transaction(
+        make_ynab_transaction(
             amount=asset_adjustment,
             budget_id=budget_id,
             account_id=assets_acc.id,
@@ -120,4 +117,14 @@ def sync_robinhood_to_ynab(
 
     all_transfers: List[Transfer] = get_all_transfers(trader=trader)
     for transfer in all_transfers:
-        print(transfer)
+        if transfer.is_older_than(last_rh_update_date):
+            logging.info(f"Ignoring old transfer {transfer}")
+            continue
+        logging.info(f"Adding new transfer {transfer}")
+        make_ynab_transaction(
+            amount=transfer.amount,
+            budget_id=budget_id,
+            account_id=holding_acc.id,
+            memo=transfer.memo,
+            date=transfer.date,
+            approved=False)
