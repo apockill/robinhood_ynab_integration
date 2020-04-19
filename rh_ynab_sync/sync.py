@@ -73,7 +73,6 @@ def sync_holdings_account(since_date: Datetime, trader: Robinhood,
             approved=False)
 
 
-
 def sync_robinhood_to_ynab(
         robinhood_assets_acc: str,
         robinhood_holding_acc: str,
