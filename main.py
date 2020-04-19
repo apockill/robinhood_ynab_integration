@@ -21,7 +21,7 @@ def main(*args):
         robinhood_holding_acc=os.environ["RH_CHECKING_ACC"],
 
         # Params
-        oldest_transaction_day_age=os.environ.get("SINCE_DAYS_OLD", 13)
+        oldest_transaction_day_age=int(os.environ.get("SINCE_DAYS_OLD", 13))
     )
 
 
