@@ -18,7 +18,10 @@ def main(*args):
 
         # General Arguments
         robinhood_assets_acc=os.environ["RH_ASSETS_ACC"],
-        robinhood_holding_acc=os.environ["RH_CHECKING_ACC"]
+        robinhood_holding_acc=os.environ["RH_CHECKING_ACC"],
+
+        # Params
+        oldest_transaction_day_age=os.environ.get("SINCE_DAYS_OLD", 13)
     )
 
 

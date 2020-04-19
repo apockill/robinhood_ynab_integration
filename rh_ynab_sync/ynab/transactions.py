@@ -54,6 +54,8 @@ class TransactionsLookup:
     def pop_matching(self, amount):
         """Finds transactions that match the amount specified to within
         +-1 cent, and return said transaction."""
+        if len(self._transactions) == 0:
+            return None
 
         def abs_difference(transaction):
             t1 = round(transaction.amount / 1000, 3)

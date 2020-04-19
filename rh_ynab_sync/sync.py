@@ -79,7 +79,8 @@ def sync_robinhood_to_ynab(
         ynab_api_key: str,
         robinhood_username: str,
         robinhood_pass: str,
-        robinhood_qr_code: str):
+        robinhood_qr_code: str,
+        oldest_transaction_day_age: int):
     # Log in to Robinhood
     trader = Robinhood()
     login_successful = trader.login(
@@ -102,7 +103,8 @@ def sync_robinhood_to_ynab(
         trader=trader,
         budget_id=budget_id)
 
-    since_date = Datetime.now() - datetime.timedelta(days=14)
+    since_date = (Datetime.now() -
+                  datetime.timedelta(days=oldest_transaction_day_age))
     sync_holdings_account(
         since_date=since_date,
         trader=trader,
