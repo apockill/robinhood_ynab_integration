@@ -40,7 +40,7 @@ class Transfer:
 
 def get_signed_amount(amount, key, pos, neg):
     if key == pos:
-        return amount
+        return float(amount)
     elif key == neg:
         return float(amount) * -1
     else:
@@ -61,6 +61,18 @@ def get_all_transfers(trader: Robinhood) -> List[Transfer]:
                 transfer_type=Transfer.TransferType.internal_transfers))
 
     # TODO: Add support for "sweeps", aka, money from interest
+    sweeps = trader.get_sweeps()["results"]
+    for sweep in sweeps:
+        assert sweep["amount"]["currency_code"] == "USD"
+        amount = get_signed_amount(
+            sweep["amount"]["amount"],
+            key=sweep["direction"],
+            pos="credit", neg="debit")
+        all_transfers.append(
+            Transfer(
+                amount=amount,
+                date=sweep["pay_date"],
+                transfer_type=Transfer.TransferType.interest))
 
     # These are transfers that were initiated from an outside account to RH
     received_transfers = trader.get_received_transfers()["results"]
