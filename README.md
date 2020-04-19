@@ -45,6 +45,11 @@ python3 sync_rh_to_ynab.py
 ```
 
 # Instructions for Google Cloud Functions setup
-(Coming soon) 
+(These instructions need fleshing out)
 
-How to set up automatic sync that happens every X hours using Google Cloud Functions and Cloud Scheduler.
+1. Zip up the source using the following command on the root of the repository
+    ```commandline
+    zip source.zip * -r
+    ```
+2. Upload the zip to a google cloud function
+3. Use Google Cloud Scheduler to run the script once every day.
