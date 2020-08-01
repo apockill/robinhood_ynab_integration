@@ -1,4 +1,4 @@
-from Robinhood import Robinhood
+from Robinhood import Robinhood, exceptions
 
 
 def get_total_assets_value(rh: Robinhood):
@@ -17,7 +17,14 @@ def get_total_assets_value(rh: Robinhood):
             # the account
             continue
 
-        symbol = rh.get_url(position["instrument"])["symbol"]
+        instrument = rh.get_url(position["instrument"])
+        if instrument["state"] == "inactive":
+            # This symbol may have been discontinued and changed into a
+            # different symbol. Calling get_quote() will result in an
+            # InvalidTickerSymbol exception
+            continue
+
+        symbol = instrument["symbol"]
         quote = rh.get_quote(symbol)
         price_str = quote["last_extended_hours_trade_price"]
         if price_str is None:
