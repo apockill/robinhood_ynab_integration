@@ -64,7 +64,7 @@ class TransactionsLookup:
 
         closest_transaction = min(self._transactions, key=abs_difference)
 
-        # Allow a +-1 cent threshold (happens once in a blue moon)
-        if abs_difference(closest_transaction) <= 0.01:
+        # Allow a < +-1 cent threshold (happens once in a blue moon)
+        if abs_difference(closest_transaction) < 0.01:
             return self._transactions.pop(
                 self._transactions.index(closest_transaction))
