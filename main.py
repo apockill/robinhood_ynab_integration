@@ -1,4 +1,5 @@
 import os
+import logging
 
 from rh_ynab_sync import sync_robinhood_to_ynab
 
@@ -8,6 +9,7 @@ def main(*args):
     The only reason '*args' is accepted is so that Google Cloud Functions can
     run this script.
     """
+    logging.basicConfig(level="INFO")
     sync_robinhood_to_ynab(
         # Lot's of secrets
 
