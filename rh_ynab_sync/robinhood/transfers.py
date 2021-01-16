@@ -28,7 +28,7 @@ class Transfer:
         return f"Transfer(amount={self.amount}, " \
                f"date={self.date}," \
                f"transfer_type={self.transfer_type}," \
-               f"memo={self.memo})"
+               f"memo='{self.memo}')"
 
     @staticmethod
     def parse_iso_date(date_str) -> datetime.datetime:
@@ -114,14 +114,19 @@ def get_all_transfers(trader: Robinhood) -> List[Transfer]:
 
         symbol = trader.get_url(order["instrument"])["symbol"]
 
-        outflow = 0
-        for execution in order["executions"]:
-            price = float(execution["price"])
-            quantity = float(execution["quantity"])
-            outflow += price * quantity
+        amount = 0
+        if order["dollar_based_amount"] is not None:
+            logging.info("Using dollar based amount")
+            amount = order["dollar_based_amount"]["amount"]
+        else:
+            logging.info("Evaluating amount from executions")
+            for execution in order["executions"]:
+                price = float(execution["price"])
+                quantity = float(execution["quantity"])
+                amount += price * quantity
 
         amount = get_signed_amount(
-            outflow,
+            amount,
             key=order["side"],
             pos="sell", neg="buy")
         memo = f"Robinhood {symbol} {'Purchased' if amount < 0 else 'Sold'}"
