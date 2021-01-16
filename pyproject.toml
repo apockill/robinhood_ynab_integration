@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "robinhood_ynab_integration"
+version = "1.0.0"
+description = "Import stocks and cash management information to your You Need A Budget (YNAB) account!"
+authors = ["Alex Thiel <apocthiel@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+Robinhood = { git = "https://github.com/apockill/Robinhood.git" }
+ynab-client = { git = "https://github.com/apockill/ynab-client-python.git" }
+
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

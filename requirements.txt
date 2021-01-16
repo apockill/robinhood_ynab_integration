@@ -1,2 +1,0 @@
-git+https://github.com/apockill/Robinhood
-git+https://github.com/apockill/ynab-client-python
