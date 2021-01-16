@@ -60,7 +60,7 @@ def get_all_transfers(trader: Robinhood) -> List[Transfer]:
                 date=transfer["created_at"],
                 transfer_type=Transfer.TransferType.internal_transfers))
 
-    # TODO: Add support for "sweeps", aka, money from interest
+    # This is money from interest
     sweeps = trader.get_sweeps()["results"]
     for sweep in sweeps:
         assert sweep["amount"]["currency_code"] == "USD"
