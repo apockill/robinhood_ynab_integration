@@ -12,7 +12,10 @@ from .ynab.accounts import get_ynab_accounts
 from .ynab.transactions import make_ynab_transaction, TransactionsLookup
 
 
-def sync_assets_account(assets_acc: Account, trader: Robinhood, budget_id: int):
+def sync_assets_account(
+        assets_acc: Account,
+        trader: Robinhood,
+        budget_id: int):
     """
     :param assets_acc: The ynab_client Account API object
     :param trader: The Robinhood trader API object
