@@ -76,8 +76,10 @@ python3 sync_rh_to_ynab.py
 
 1. Zip up the source using the following command on the root of the repository
     ```commandline
-    poetry export > requirements.txt
+    poetry export --without-hashes > requirements.txt
     zip source.zip * -r
     ```
+    The `--without-hashes` flag prevents a bug with pip when pip installs from 
+    a git repo that has hashes.
 2. Upload the zip to a google cloud function
 3. Use Google Cloud Scheduler to run the script once every day.
