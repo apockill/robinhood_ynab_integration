@@ -138,6 +138,21 @@ def get_all_transfers(trader: Robinhood) -> List[Transfer]:
                 transfer_type=Transfer.TransferType.stock_purchase,
                 memo=memo))
 
+    # Update Crypto purchases
+    cryptos = trader.crypto_orders()["results"]
+    for crypto in cryptos:
+        amount = get_signed_amount(
+            amount=crypto["rounded_executed_notional"],
+            key=crypto["side"],
+            pos="sell", neg="buy")
+        memo = f"Robinhood Crypto {'Purchased' if amount < 0 else 'Sold'}"
+        all_transfers.append(
+            Transfer(
+                amount=amount,
+                date=crypto["last_transaction_at"],
+                transfer_type=Transfer.TransferType.stock_purchase,
+                memo=memo))
+
     # Update dividend payouts
     dividends = trader.dividends()["results"]
     for dividend in dividends:
