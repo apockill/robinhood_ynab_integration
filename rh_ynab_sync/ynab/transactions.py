@@ -26,7 +26,7 @@ def make_ynab_transaction(amount, budget_id, account_id,
     transactions_api = ynab_client.TransactionsApi()
     transactions_api.create_transaction(
         budget_id=budget_id,
-        transaction=ynab_client.SaveTransactionWrapper(transaction))
+        body=ynab_client.SaveTransactionWrapper(transaction))
 
 
 class TransactionsLookup:
