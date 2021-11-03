@@ -23,9 +23,10 @@ def sync_assets_account(
     :return:
     """
 
-    real_asset_dollars, _ = get_total_assets_value(trader)
+    real_asset_dollars = get_total_assets_value(trader)
     asset_dollars = assets_acc.balance / 1000
     asset_adjustment = round(real_asset_dollars - asset_dollars, 3)
+
     if abs(asset_adjustment) >= 0.01:
         logging.info(f"Making adjustment {asset_adjustment}")
         make_ynab_transaction(
